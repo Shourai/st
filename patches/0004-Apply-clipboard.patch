@@ -1,0 +1,24 @@
+From ea299313051d7d0aa1240b1e7ce57c8844915262 Mon Sep 17 00:00:00 2001
+From: Shourai <10200748+Shourai@users.noreply.github.com>
+Date: Sat, 18 Jul 2020 12:48:58 +0200
+Subject: [PATCH 4/5] Apply clipboard
+
+---
+ x.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/x.c b/x.c
+index a729880..c87e48e 100644
+--- a/x.c
++++ b/x.c
+@@ -678,6 +678,7 @@ setsel(char *str, Time t)
+ 	XSetSelectionOwner(xw.dpy, XA_PRIMARY, xw.win, t);
+ 	if (XGetSelectionOwner(xw.dpy, XA_PRIMARY) != xw.win)
+ 		selclear();
++	clipcopy(NULL);
+ }
+ 
+ void
+-- 
+2.27.0
+

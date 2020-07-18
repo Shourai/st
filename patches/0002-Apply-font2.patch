@@ -1,0 +1,181 @@
+From ff4fd8469be355ae8fe9e8a0feee46a734b68e74 Mon Sep 17 00:00:00 2001
+From: Shourai <10200748+Shourai@users.noreply.github.com>
+Date: Sat, 18 Jul 2020 12:48:28 +0200
+Subject: [PATCH 2/5] Apply font2
+
+---
+ Makefile     |   2 +-
+ config.def.h |  10 ++++-
+ x.c          | 101 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 111 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 470ac86..4d49649 100644
+--- a/Makefile
++++ b/Makefile
+@@ -30,7 +30,7 @@ st: $(OBJ)
+ 	$(CC) -o $@ $(OBJ) $(STLDFLAGS)
+ 
+ clean:
+-	rm -f st $(OBJ) st-$(VERSION).tar.gz
++	rm -f st $(OBJ) st-$(VERSION).tar.gz config.h
+ 
+ dist: clean
+ 	mkdir -p st-$(VERSION)
+diff --git a/config.def.h b/config.def.h
+index 53b93ab..984158d 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -5,7 +5,15 @@
+  *
+  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
+  */
+-static char *font = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
++static char *font = "Jetbrains Mono:pixelsize=14:antialias=true:autohint=true";
++/* Spare fonts */
++static char *font2[] = {
++	"Droid Sans Mono:style=Regular:pixelsize=14:antialias=true:autohint=true",
++	"Menlo:style=Regular:pixelsize=14:antialias=true:autohint=true",
++	"Inconsolata for Powerline:pixelsize=14:antialias=true:autohint=true",
++	"Hack Nerd Font Mono:pixelsize=14:antialias=true:autohint=true", 
++};
++
+ static int borderpx = 2;
+ 
+ /*
+diff --git a/x.c b/x.c
+index 73545d8..a729880 100644
+--- a/x.c
++++ b/x.c
+@@ -158,6 +158,8 @@ static void xhints(void);
+ static int xloadcolor(int, const char *, Color *);
+ static int xloadfont(Font *, FcPattern *);
+ static void xloadfonts(char *, double);
++static int xloadsparefont(FcPattern *, int);
++static void xloadsparefonts(void);
+ static void xunloadfont(Font *);
+ static void xunloadfonts(void);
+ static void xsetenv(void);
+@@ -308,6 +310,7 @@ zoomabs(const Arg *arg)
+ {
+ 	xunloadfonts();
+ 	xloadfonts(usedfont, arg->f);
++	xloadsparefonts();
+ 	cresize(0, 0);
+ 	redraw();
+ 	xhints();
+@@ -1028,6 +1031,101 @@ xloadfonts(char *fontstr, double fontsize)
+ 	FcPatternDestroy(pattern);
+ }
+ 
++int
++xloadsparefont(FcPattern *pattern, int flags)
++{
++	FcPattern *match;
++	FcResult result;
++	
++	match = FcFontMatch(NULL, pattern, &result);
++	if (!match) {
++		return 1;
++	}
++
++	if (!(frc[frclen].font = XftFontOpenPattern(xw.dpy, match))) {
++		FcPatternDestroy(match);
++		return 1;
++	}
++
++	frc[frclen].flags = flags;
++	/* Believe U+0000 glyph will present in each default font */
++	frc[frclen].unicodep = 0;
++	frclen++;
++
++	return 0;
++}
++
++void
++xloadsparefonts(void)
++{
++	FcPattern *pattern;
++	double sizeshift, fontval;
++	int fc;
++	char **fp;
++
++	if (frclen != 0)
++		die("can't embed spare fonts. cache isn't empty");
++
++	/* Calculate count of spare fonts */
++	fc = sizeof(font2) / sizeof(*font2);
++	if (fc == 0)
++		return;
++
++	/* Allocate memory for cache entries. */
++	if (frccap < 4 * fc) {
++		frccap += 4 * fc - frccap;
++		frc = xrealloc(frc, frccap * sizeof(Fontcache));
++	}
++
++	for (fp = font2; fp - font2 < fc; ++fp) {
++	
++		if (**fp == '-')
++			pattern = XftXlfdParse(*fp, False, False);
++		else
++			pattern = FcNameParse((FcChar8 *)*fp);
++	
++		if (!pattern)
++			die("can't open spare font %s\n", *fp);
++	   		
++		if (defaultfontsize > 0) {
++			sizeshift = usedfontsize - defaultfontsize;
++			if (sizeshift != 0 &&
++					FcPatternGetDouble(pattern, FC_PIXEL_SIZE, 0, &fontval) ==
++					FcResultMatch) {	
++				fontval += sizeshift;
++				FcPatternDel(pattern, FC_PIXEL_SIZE);
++				FcPatternDel(pattern, FC_SIZE);
++				FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fontval);
++			}
++		}
++	
++		FcPatternAddBool(pattern, FC_SCALABLE, 1);
++	
++		FcConfigSubstitute(NULL, pattern, FcMatchPattern);
++		XftDefaultSubstitute(xw.dpy, xw.scr, pattern);
++	
++		if (xloadsparefont(pattern, FRC_NORMAL))
++			die("can't open spare font %s\n", *fp);
++	
++		FcPatternDel(pattern, FC_SLANT);
++		FcPatternAddInteger(pattern, FC_SLANT, FC_SLANT_ITALIC);
++		if (xloadsparefont(pattern, FRC_ITALIC))
++			die("can't open spare font %s\n", *fp);
++			
++		FcPatternDel(pattern, FC_WEIGHT);
++		FcPatternAddInteger(pattern, FC_WEIGHT, FC_WEIGHT_BOLD);
++		if (xloadsparefont(pattern, FRC_ITALICBOLD))
++			die("can't open spare font %s\n", *fp);
++	
++		FcPatternDel(pattern, FC_SLANT);
++		FcPatternAddInteger(pattern, FC_SLANT, FC_SLANT_ROMAN);
++		if (xloadsparefont(pattern, FRC_BOLD))
++			die("can't open spare font %s\n", *fp);
++	
++		FcPatternDestroy(pattern);
++	}
++}
++
+ void
+ xunloadfont(Font *f)
+ {
+@@ -1137,6 +1235,9 @@ xinit(int cols, int rows)
+ 	usedfont = (opt_font == NULL)? font : opt_font;
+ 	xloadfonts(usedfont, 0);
+ 
++	/* spare fonts */
++	xloadsparefonts();
++
+ 	/* colors */
+ 	xw.cmap = XCreateColormap(xw.dpy, parent, xw.vis, None);
+ 	xloadcols();
+-- 
+2.27.0
+
