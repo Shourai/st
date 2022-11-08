@@ -10,7 +10,6 @@ The original st webpage is here: [https://st.suckless.org/](https://st.suckless.
 ### Patches applied
 
 * [Alpha](https://st.suckless.org/patches/alpha/) : This patch allows users to change the opacity of the background. Note that you need an X composite manager (e.g. compton, xcompmgr) to make this patch effective.
-* [Scrollback](https://st.suckless.org/patches/scrollback/) : Scroll back through terminal output using Shift+{PageUp, PageDown} and Shift+MouseWheel.
 * [Clipboard](https://st.suckless.org/patches/clipboard/) : This trivial patch sets CLIPBOARD on selection.
 * [font2](https://st.suckless.org/patches/font2/) : This patch allows to add spare font besides default.
 * [Fix Keyboard Input](https://st.suckless.org/patches/fix_keyboard_input/) : Add a few previously undefined keys.
@@ -61,16 +60,6 @@ Paste       | `ctrl` + `shift` + `v`
 Zoom In     | `alt` + `shift` + `+`
 Zoom Out    | `alt` + `shift` + `-`
 Reset Zoom  | `alt` + `shift` + `0`
-Scroll up   | `shift` + `page up`
-Scroll down | `shift` + `page down`
-
-#### Mouse
-Scroll is implemented using [scroll](https://git.suckless.org/scroll/log.html)
-Action | Modifier
----    | ---
-Scroll |  `mouse wheel`
-
-
 
 ## Credits
 
