@@ -7,14 +7,36 @@ st is a simple terminal emulator for X which sucks less.
 This is a fork of st, the original repo can be found here: [https://git.suckless.org/st/](https://git.suckless.org/st/)
 The original st webpage is here: [https://st.suckless.org/](https://st.suckless.org/)
 
-### Patches applied
+### Available patches
 
 * [Alpha](https://st.suckless.org/patches/alpha/) : This patch allows users to change the opacity of the background. Note that you need an X composite manager (e.g. compton, xcompmgr) to make this patch effective.
 * [Clipboard](https://st.suckless.org/patches/clipboard/) : This trivial patch sets CLIPBOARD on selection.
 * [font2](https://st.suckless.org/patches/font2/) : This patch allows to add spare font besides default.
-* [Fix Keyboard Input](https://st.suckless.org/patches/fix_keyboard_input/) : Add a few previously undefined keys.
 
-##### Applying/Removing Patches
+#### Colorscheme patch
+The colorscheme patch is a custom patch, it is not the ones from [colorscheme](https://st.suckless.org/patches/colorschemes/)
+It is `solarized.dark` exported from https://terminal.sexy with a different bg and fg color.
+Also the `defaultfg`, `defaultbg` and `defaultcs` are not `static`s, otherwise it won't compile.
+
+### Previous available patches
+
+* [Fix Keyboard Input](https://st.suckless.org/patches/fix_keyboard_input/) : Add a few previously undefined keys.
+Removed as this was used for additional keys for zooming.
+
+### Applying/Removing Patches
+Applying patches from this repository use:
+
+- applied all at once without committing:
+```
+git apply patches/*
+```
+
+- applied as individual commits
+```
+git am patches/*
+```
+
+Applying patches from https://st.suckless.org/patches/ use:
 ```
 # Add custom patch
 patch -Np1 -i patches/custom.diff
@@ -57,9 +79,9 @@ Action      | Key Combination
 ---         | ---
 Copy        | `ctrl` + `shift` + `c`
 Paste       | `ctrl` + `shift` + `v`
-Zoom In     | `alt` + `shift` + `+`
-Zoom Out    | `alt` + `shift` + `-`
-Reset Zoom  | `alt` + `shift` + `0`
+Zoom In     | `ctrl` + `shift` + `PageUp`
+Zoom Out    | `ctrl` + `shift` + `PageDown`
+Reset Zoom  | `ctrl` + `shift` + `Home`
 
 ## Credits
 
