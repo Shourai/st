@@ -1,17 +1,17 @@
-From 7979ecf01c6d68f8a6593e3f338c77b8d7526931 Mon Sep 17 00:00:00 2001
+From 307b030a02f8bfda47600acc881fdd4876767204 Mon Sep 17 00:00:00 2001
 From: Shourai <10200748+Shourai@users.noreply.github.com>
-Date: Sat, 18 Jul 2020 12:48:15 +0200
-Subject: [PATCH 1/5] Apply alpha
+Date: Tue, 8 Nov 2022 19:30:52 +0100
+Subject: Apply alpha on st version 0.9
 
 ---
- config.def.h | 13 ++++++++-----
+ config.def.h |  3 +++
  config.mk    |  2 +-
  st.h         |  1 +
  x.c          | 40 ++++++++++++++++++++++++++++++----------
- 4 files changed, 40 insertions(+), 16 deletions(-)
+ 4 files changed, 35 insertions(+), 11 deletions(-)
 
 diff --git a/config.def.h b/config.def.h
-index 6f05dce..53b93ab 100644
+index 91ab8ca..38e5154 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -93,6 +93,9 @@ char *termname = "st-256color";
@@ -19,37 +19,13 @@ index 6f05dce..53b93ab 100644
  unsigned int tabspaces = 8;
  
 +/* bg opacity */
-+float alpha = 0.70;
++float alpha = 0.7;
 +
  /* Terminal colors (16 first used in escape sequence) */
  static const char *colorname[] = {
  	/* 8 normal colors */
-@@ -118,8 +121,8 @@ static const char *colorname[] = {
- 	[255] = 0,
- 
- 	/* more colors can be added after 255 to use with DefaultXX */
--	"#cccccc",
--	"#555555",
-+	"#272727",
-+	"#ffffff",
- };
- 
- 
-@@ -127,9 +130,9 @@ static const char *colorname[] = {
-  * Default colors (colorname index)
-  * foreground, background, cursor, reverse cursor
-  */
--unsigned int defaultfg = 7;
--unsigned int defaultbg = 0;
--static unsigned int defaultcs = 256;
-+unsigned int defaultfg = 257;
-+unsigned int defaultbg = 256;
-+static unsigned int defaultcs = 257;
- static unsigned int defaultrcs = 257;
- 
- /*
 diff --git a/config.mk b/config.mk
-index c070a4a..aaa54ff 100644
+index 1e306f8..47c615e 100644
 --- a/config.mk
 +++ b/config.mk
 @@ -16,7 +16,7 @@ PKG_CONFIG = pkg-config
@@ -62,16 +38,16 @@ index c070a4a..aaa54ff 100644
         `$(PKG_CONFIG) --libs freetype2`
  
 diff --git a/st.h b/st.h
-index 3d351b6..9f11a6a 100644
+index fd3b0d8..9f91e2a 100644
 --- a/st.h
 +++ b/st.h
-@@ -123,3 +123,4 @@ extern char *termname;
- extern unsigned int tabspaces;
+@@ -124,3 +124,4 @@ extern unsigned int tabspaces;
  extern unsigned int defaultfg;
  extern unsigned int defaultbg;
+ extern unsigned int defaultcs;
 +extern float alpha;
 diff --git a/x.c b/x.c
-index 210f184..73545d8 100644
+index aa09997..8a65792 100644
 --- a/x.c
 +++ b/x.c
 @@ -105,6 +105,7 @@ typedef struct {
@@ -90,7 +66,7 @@ index 210f184..73545d8 100644
  static char *opt_class = NULL;
  static char **opt_cmd  = NULL;
  static char *opt_embed = NULL;
-@@ -734,7 +736,7 @@ xresize(int col, int row)
+@@ -752,7 +754,7 @@ xresize(int col, int row)
  
  	XFreePixmap(xw.dpy, xw.buf);
  	xw.buf = XCreatePixmap(xw.dpy, xw.win, win.w, win.h,
@@ -99,7 +75,7 @@ index 210f184..73545d8 100644
  	XftDrawChange(xw.draw, xw.buf);
  	xclear(0, 0, win.w, win.h);
  
-@@ -794,6 +796,13 @@ xloadcols(void)
+@@ -812,6 +814,13 @@ xloadcols(void)
  			else
  				die("could not allocate color %d\n", i);
  		}
@@ -113,7 +89,7 @@ index 210f184..73545d8 100644
  	loaded = 1;
  }
  
-@@ -1103,11 +1112,23 @@ xinit(int cols, int rows)
+@@ -1134,11 +1143,23 @@ xinit(int cols, int rows)
  	Window parent;
  	pid_t thispid = getpid();
  	XColor xmousefg, xmousebg;
@@ -138,7 +114,7 @@ index 210f184..73545d8 100644
  
  	/* font */
  	if (!FcInit())
-@@ -1117,7 +1138,7 @@ xinit(int cols, int rows)
+@@ -1148,7 +1169,7 @@ xinit(int cols, int rows)
  	xloadfonts(usedfont, 0);
  
  	/* colors */
@@ -147,7 +123,7 @@ index 210f184..73545d8 100644
  	xloadcols();
  
  	/* adjust fixed window geometry */
-@@ -1137,19 +1158,15 @@ xinit(int cols, int rows)
+@@ -1168,19 +1189,15 @@ xinit(int cols, int rows)
  		| ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
  	xw.attrs.colormap = xw.cmap;
  
@@ -170,7 +146,7 @@ index 210f184..73545d8 100644
  	XSetForeground(xw.dpy, dc.gc, dc.col[defaultbg].pixel);
  	XFillRectangle(xw.dpy, xw.buf, dc.gc, 0, 0, win.w, win.h);
  
-@@ -1988,6 +2005,9 @@ main(int argc, char *argv[])
+@@ -2038,6 +2055,9 @@ main(int argc, char *argv[])
  	case 'a':
  		allowaltscreen = 0;
  		break;
@@ -181,5 +157,5 @@ index 210f184..73545d8 100644
  		opt_class = EARGF(usage());
  		break;
 -- 
-2.27.0
+2.38.1
 

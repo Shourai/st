@@ -1,17 +1,18 @@
-From 01802617dab7370542755f7e38453be57e7516c8 Mon Sep 17 00:00:00 2001
+From 66e82b1d4db5c6ad7d62f809c38ff6f27773238a Mon Sep 17 00:00:00 2001
 From: Shourai <10200748+Shourai@users.noreply.github.com>
-Date: Sat, 18 Jul 2020 12:48:48 +0200
-Subject: [PATCH 3/5] Apply colorscheme
+Date: Tue, 8 Nov 2022 19:45:28 +0100
+Subject: Apply colorscheme on st version 0.9
 
+Apply colorscheme on st version 0.9
 ---
- config.def.h | 38 +++++++++++++++++++-------------------
- 1 file changed, 19 insertions(+), 19 deletions(-)
+ config.def.h | 57 +++++++++++++++++++++++++---------------------------
+ 1 file changed, 27 insertions(+), 30 deletions(-)
 
 diff --git a/config.def.h b/config.def.h
-index 984158d..1e55784 100644
+index 2ac0781..21a5b0a 100644
 --- a/config.def.h
 +++ b/config.def.h
-@@ -106,25 +106,25 @@ float alpha = 0.70;
+@@ -106,33 +106,30 @@ float alpha = 0.7;
  
  /* Terminal colors (16 first used in escape sequence) */
  static const char *colorname[] = {
@@ -34,6 +35,15 @@ index 984158d..1e55784 100644
 -	"magenta",
 -	"cyan",
 -	"white",
+-
+-	[255] = 0,
+-
+-	/* more colors can be added after 255 to use with DefaultXX */
+-	"#cccccc",
+-	"#555555",
+-	"gray90", /* default foreground colour */
+-	"black", /* default background colour */
++
 +  /* 8 normal colors */
 +  [0] = "#002b36", /* black   */
 +  [1] = "#dc322f", /* red     */
@@ -53,9 +63,26 @@ index 984158d..1e55784 100644
 +  [13] = "#6c71c4", /* magenta */
 +  [14] = "#2aa198", /* cyan    */
 +  [15] = "#fdf6e3", /* white   */
++
++  /* special colors */
++  [256] = "#272727", /* background */
++  [257] = "#ffffff", /* foreground */
+ };
  
- 	[255] = 0,
  
+@@ -140,9 +137,9 @@ static const char *colorname[] = {
+  * Default colors (colorname index)
+  * foreground, background, cursor, reverse cursor
+  */
+-unsigned int defaultfg = 258;
+-unsigned int defaultbg = 259;
+-unsigned int defaultcs = 256;
++unsigned int defaultfg = 257;
++unsigned int defaultbg = 256;
++unsigned int defaultcs = 257;
+ static unsigned int defaultrcs = 257;
+ 
+ /*
 -- 
-2.27.0
+2.38.1
 
