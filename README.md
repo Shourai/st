@@ -5,6 +5,7 @@ st is a simple terminal emulator for X which sucks less.
 ## Notes about this fork
 
 This is a fork of st, the original repo can be found here: [https://git.suckless.org/st/](https://git.suckless.org/st/)
+
 The original st webpage is here: [https://st.suckless.org/](https://st.suckless.org/)
 
 ### Available patches
@@ -65,6 +66,8 @@ make clean install
 
 ## Running st
 
+Start `st` from a launcher like dmenu or rofi.
+
 If you did not install st with make clean install, you must compile
 the st terminfo entry with the following command:
 
@@ -74,7 +77,7 @@ tic -sx st.info
 
 See the man page for additional details.
 
-#### Keyboard
+### Keyboard Shortcuts
 Action      | Key Combination
 ---         | ---
 Copy        | `ctrl` + `shift` + `c`
