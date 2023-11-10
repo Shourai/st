@@ -13,6 +13,7 @@ The original st webpage is here: [https://st.suckless.org/](https://st.suckless.
 * [Alpha](https://st.suckless.org/patches/alpha/) : This patch allows users to change the opacity of the background. Note that you need an X composite manager (e.g. compton, xcompmgr) to make this patch effective.
 * [Clipboard](https://st.suckless.org/patches/clipboard/) : This trivial patch sets CLIPBOARD on selection.
 * [font2](https://st.suckless.org/patches/font2/) : This patch allows to add spare font besides default.
+* [Wide glyph](https://st.suckless.org/patches/glyph_wide_support/) : This patch allows to display the full glyph instead of it being cut off. See also [here](https://github.com/LukeSmithxyz/st/pull/349)
 
 #### Colorscheme patch
 The colorscheme patch is a custom patch, it is not the ones from [colorscheme](https://st.suckless.org/patches/colorschemes/)
